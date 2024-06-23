@@ -1,6 +1,7 @@
 import { Mesh, MeshStandardMaterial, Vector3 } from "three";
 import GameEntity from "./GameEntity";
 import ResourceManager from "../utils/ResourceManager";
+import GameScene from "../scene/GameScene";
 
 //helper to track keyboard state
 type keyboardState = {
@@ -122,6 +123,14 @@ class PlayerTank extends GameEntity {
         computedRotatinon -= Math.PI * deltaT;
     }
 
+    //keep computer rotation between 0 and 2PI
+    const fullCircle = Math.PI * 2;
+    if (computedRotatinon > fullCircle) {
+        computedRotatinon = fullCircle - computedRotatinon;
+    } else if (computedRotatinon < 0){
+        computedRotatinon = fullCircle + computedRotatinon
+    }
+
     // decompose movement depending on rotation
     const yMovement = moveSpeed * deltaT * Math.cos(computedRotatinon); //this is not running every second
     const xMovement = moveSpeed * deltaT * Math.sin(computedRotatinon);
@@ -135,6 +144,13 @@ class PlayerTank extends GameEntity {
     this._mesh.setRotationFromAxisAngle(new Vector3(0, 0, 1), computedRotatinon)
     //update teh current position by adding the movement
     this._mesh.position.add(computedMovement);
+
+    //make the camera follow the player tank
+    GameScene.instance.camera.position.set(
+      this._mesh.position.x,
+      this._mesh.position.y,
+      GameScene.instance.camera.position.z,
+    )
   }
 }
 

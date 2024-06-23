@@ -51,6 +51,10 @@ class ResourceManager {
     // add to the game resources
     this._textures.set("tank-body", tankBodyTexture);
     this._textures.set("tank-turret", tankTurretTexture);
+
+    //walls texture
+    const wallTexture = await textureLoader.loadAsync('textures/wall.png');
+    this._textures.set('wall', wallTexture);
   };
 
   // method for ground textures loading
