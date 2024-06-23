@@ -1,4 +1,4 @@
-import { Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer, BoxGeometry, Vector3, HemisphereLight } from "three";
+import { PerspectiveCamera, Scene, WebGLRenderer, Vector3, HemisphereLight } from "three";
 import GameEntity from "../entities/GameEntity";
 import GameMap from "../map/GameMap";
 import ResourceManager from "../utils/ResourceManager";
