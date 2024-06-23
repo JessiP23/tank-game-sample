@@ -53,7 +53,7 @@ class ResourceManager {
     this._textures.set("tank-turret", tankTurretTexture);
 
     //walls texture
-    const wallTexture = await textureLoader.loadAsync('textures/wall.png');
+    const wallTexture = await textureLoader.loadAsync('textures/texture.jpg');
     this._textures.set('wall', wallTexture);
   };
 
