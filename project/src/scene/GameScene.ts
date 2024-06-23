@@ -121,6 +121,8 @@ import Wall from "../map/Wall";
     };
   
     public render = () => {
+      //remove entitied no longer needed
+      this.disposeEntities();
       requestAnimationFrame(this.render);
       //obtain elapsed time between frams
       const deltaT = this._clock.getDelta();
@@ -131,6 +133,25 @@ import Wall from "../map/Wall";
       }
       this._renderer.render(this._scene, this._camera);
     };
+
+    //method to dynamically add entities to the scene
+    public addToScene = (entity: GameEntity) => {
+      this._gameEntities.push(entity);
+      this._scene.add(entity.mesh);
+    };
+
+    //method to remove entities no longer needed
+    private disposeEntities = () => {
+      const entitiesToBeDisposed = this._gameEntities.filter((e) => e.shouldDispose);
+      entitiesToBeDisposed.forEach((element) => {
+        this._scene.remove(element.mesh);
+        element.dispose();
+      });
+      //update entities array
+      this._gameEntities = [...this._gameEntities.filter((e) => !e.shouldDispose),
+      ];
+    }
+
   }
   
   export default GameScene;

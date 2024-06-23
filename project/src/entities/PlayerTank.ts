@@ -2,6 +2,7 @@ import { Box3, Mesh, MeshStandardMaterial, Sphere, Vector3 } from "three";
 import GameEntity from "./GameEntity";
 import ResourceManager from "../utils/ResourceManager";
 import GameScene from "../scene/GameScene";
+import Bullet from "./Bullet";
 
 //helper to track keyboard state
 type keyboardState = {
@@ -23,7 +24,7 @@ class PlayerTank extends GameEntity {
     };
 
   constructor(position: Vector3) {
-    super(position);
+    super(position, 'player');
     // listen to the methods that track keyboard state.
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("keyup", this.handleKeyUp);
@@ -49,7 +50,7 @@ class PlayerTank extends GameEntity {
     }
   };
 
-  private handleKeyUp = (e:KeyboardEvent) => {
+  private handleKeyUp = async (e:KeyboardEvent) => {
     switch (e.key) {
         case "ArrowUp":
             this._keyboardState.UpPressed = false;
@@ -63,9 +64,22 @@ class PlayerTank extends GameEntity {
         case "ArrowRight":
             this._keyboardState.RightPressed = false;
             break;
+        case " ":
+          await this.shoot();
+          break;
         default:
             break;
     }
+  }
+
+  public shoot =  async () => {
+    //create an offset position (shoot a bit ahead of the tank)
+    const offset = new Vector3(Math.sin(this._rotation) * 0.3, -Math.cos(this._rotation) * 0.3, 0);
+    const shootingPosition = this._mesh.position.clone().add(offset);
+    //create and load the bullet
+    const bullet = new Bullet(shootingPosition, this._rotation);
+    await bullet.load();
+    GameScene.instance.addToScene(bullet);
   }
 
   public load = async () => {
@@ -156,7 +170,7 @@ class PlayerTank extends GameEntity {
     testingSphere.center.add(computedMovement);
 
     //search for possible collision
-    const colliders = GameScene.instance.gameEntities.filter((e) => e !== this && e.collider && e.collider!.intersectsSphere(testingSphere));
+    const colliders = GameScene.instance.gameEntities.filter((e) => e !== this && e.entityType !== 'bullet' && e.collider && e.collider!.intersectsSphere(testingSphere));
 
     //something is blocking the tank
     if (colliders.length) {
