@@ -12,6 +12,8 @@ type keyboardState = {
 
 class PlayerTank extends GameEntity {
 
+    private _rotation:number = 0;
+
     private _keyboardState: keyboardState = {
         LeftPressed: false,
         RightPressed: false,
@@ -35,8 +37,12 @@ class PlayerTank extends GameEntity {
         case "ArrowDown":
             this._keyboardState.DownPressed = true;
             break;
-
-    
+        case 'ArrowLeft':
+            this._keyboardState.LeftPressed = true;
+            break;
+        case "ArrowRight":
+            this._keyboardState.RightPressed = true;
+            break;
         default:
             break;
     }
@@ -49,6 +55,12 @@ class PlayerTank extends GameEntity {
             break;
         case "ArrowDown":   
             this._keyboardState.DownPressed = false;
+            break;
+        case 'ArrowLeft':
+            this._keyboardState.LeftPressed = false;
+            break;
+        case "ArrowRight":
+            this._keyboardState.RightPressed = false;
             break;
         default:
             break;
@@ -100,15 +112,27 @@ class PlayerTank extends GameEntity {
   };
 
   public update = (deltaT:number) => {
+    let computedRotatinon = this._rotation;
     let computedMovement = new Vector3(); //final movement for this frame
     const moveSpeed = 2; //in tiles per second
-    const yMovement = moveSpeed * deltaT; //this is not running every second
-    if (this._keyboardState.UpPressed) {
-        computedMovement = new Vector3(0, -yMovement, 0);
-    } else if (this._keyboardState.DownPressed) {
-        computedMovement = new Vector3(0, yMovement,0);
+
+    if (this._keyboardState.LeftPressed) {
+        computedRotatinon += Math.PI * deltaT;
+    } else if (this._keyboardState.RightPressed) {
+        computedRotatinon -= Math.PI * deltaT;
     }
 
+    // decompose movement depending on rotation
+    const yMovement = moveSpeed * deltaT * Math.cos(computedRotatinon); //this is not running every second
+    const xMovement = moveSpeed * deltaT * Math.sin(computedRotatinon);
+    if (this._keyboardState.UpPressed) {
+        computedMovement = new Vector3(xMovement, -yMovement, 0);
+    } else if (this._keyboardState.DownPressed) {
+        computedMovement = new Vector3(-xMovement, yMovement,0);
+    }
+
+    this._rotation = computedRotatinon;
+    this._mesh.setRotationFromAxisAngle(new Vector3(0, 0, 1), computedRotatinon)
     //update teh current position by adding the movement
     this._mesh.position.add(computedMovement);
   }
