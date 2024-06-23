@@ -1,4 +1,4 @@
-import { BoxGeometry, Mesh, MeshStandardMaterial, Vector3 } from "three";
+import { Box3, BoxGeometry, Mesh, MeshStandardMaterial, Vector3 } from "three";
 import GameEntity from "../entities/GameEntity";
 import ResourceManager from "../utils/ResourceManager";
 
@@ -15,6 +15,9 @@ class Wall extends GameEntity{
         this._mesh = new Mesh(geometry, material);
         //set position
         this._mesh.position.set(this._position.x, this._position.y, this._position.z);
+        
+        //create a collider for this object
+        this._collider = new Box3().setFromObject(this._mesh);
     };
 };
 
