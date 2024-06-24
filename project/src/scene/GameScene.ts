@@ -14,6 +14,7 @@ import PlayerTank from "../entities/PlayerTank";
 import Wall from "../map/Wall";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
+
 class GameScene {
   private static _instance = new GameScene();
   public static get instance() {
@@ -49,6 +50,8 @@ class GameScene {
     return this._gameEntities;
   }
 
+  private _playerTank: PlayerTank | null = null;
+
   private constructor() {
     this._width = window.innerWidth;
     this._height = window.innerHeight;
@@ -66,6 +69,7 @@ class GameScene {
     }
     targetElement.appendChild(this._renderer.domElement);
     // setup camera
+    
 
     this._miniMapCanvas = document.getElementById('mini-map') as HTMLCanvasElement;
     this._miniMapRenderer = new WebGLRenderer({
@@ -76,7 +80,7 @@ class GameScene {
 
     const aspectRatio = this._width / this._height;
     this._camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
-    this._camera.position.set(30,0,10);
+    this._camera.position.set(0,0,10);
 
     const mapHalfSize = this._mapSize / 2;
     this._cameraTop = new OrthographicCamera(-mapHalfSize, mapHalfSize, mapHalfSize, -mapHalfSize);
@@ -97,6 +101,7 @@ class GameScene {
     // add the player tank
     const playerTank = new PlayerTank(new Vector3(7, 7, 0));
     this._gameEntities.push(playerTank);
+    this._playerTank = playerTank;
 
     this.createWalls();
   }
@@ -156,6 +161,11 @@ class GameScene {
       element.update(deltaT); /// ???
     }
     this._controls.update();
+
+    if (this._playerTank) {
+      this.updateCameraToFollowTank(this._playerTank);
+    }
+
     this._renderer.render(this._scene, this._camera);
     this._miniMapRenderer.render(this._scene, this._cameraTop);
 
@@ -177,6 +187,18 @@ class GameScene {
     //update entities array
     this._gameEntities = [...this._gameEntities.filter((e) => !e.shouldDispose),
     ];
+  }
+
+
+  private updateCameraToFollowTank(tank: PlayerTank) {
+   // Set the camera's position to follow the tank's XZ movement
+  this._camera.position.x = tank.position.x;
+  this._camera.position.z = tank.position.z;
+  this._camera.position.y = tank.position.y; // keep y position fixed, 3 units above the tank
+
+
+  // Ensure the camera looks at the tank
+  this._camera.lookAt(tank.position);
   }
 
 }
