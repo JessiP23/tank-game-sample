@@ -75,9 +75,8 @@ class GameScene {
     this._camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
     this._camera.position.set(7, 7, 15);
 
-    this._cameraTop = new PerspectiveCamera(90, aspectRatio, 0.1, 1000);
-    this._cameraTop.position.set(0,10,0);
-    this._cameraTop.lookAt(0,0,-10);
+    this._cameraTop = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
+    this._cameraTop.position.set(7,7,20);
 
     // listen to size change
     window.addEventListener("resize", this.resize, false);
