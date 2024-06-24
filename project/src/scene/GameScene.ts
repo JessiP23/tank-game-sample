@@ -1,6 +1,7 @@
 import {
   Clock,
   HemisphereLight,
+  OrthographicCamera,
   PerspectiveCamera,
   Scene,
   Vector3,
@@ -22,7 +23,7 @@ class GameScene {
   private _height: number;
   private _renderer: WebGLRenderer;
   private _camera: PerspectiveCamera;
-  private _cameraTop: PerspectiveCamera;
+  private _cameraTop: OrthographicCamera;
   private _miniMapCanvas: HTMLCanvasElement;
   private _miniMapRenderer: WebGLRenderer;
   private _controls: OrbitControls;
@@ -77,9 +78,10 @@ class GameScene {
     this._camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
     this._camera.position.set(30,0,10);
 
-    this._cameraTop = new PerspectiveCamera(40, aspectRatio, 0.1, 1000);
-    this._cameraTop.position.set(7,15,-7);
-    this._cameraTop.lookAt(7.5,0,-7.5);
+    const mapHalfSize = this._mapSize / 2;
+    this._cameraTop = new OrthographicCamera(-mapHalfSize, mapHalfSize, mapHalfSize, -mapHalfSize);
+    this._cameraTop.position.set(mapHalfSize, this._mapSize, -mapHalfSize);
+    this._cameraTop.lookAt(mapHalfSize, 0, -mapHalfSize);
 
     this._controls = new OrbitControls(this._camera, this._renderer.domElement);
     this._controls.target.set(7.5, 0, -7.5)
