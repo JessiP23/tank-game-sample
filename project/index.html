@@ -7,7 +7,35 @@
     <title>Vite + TS</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+    </div>
+    <canvas id="mini-map"></canvas>
+   
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
+
+<!-- 
+const scene = new THREE.Scene();
+const scene = new THREE.PerspectiveCamera(
+70, aspect, 0.01, 500);
+
+camera.position.z = 10;
+camera-position.y = 2;
+
+camera.lookAt(0,0,0);
+
+camera.name = 'PlayerCam';
+
+//overhead cam
+let cameraTop = new THREE.PerspectiveCamera(90, aspect, 0.01, 500);
+
+cameraTop.position.set(0,10,0);
+cameraTop.lookAt(0,0,-10);
+cameraTop.name = 'OverheadCam';
+camera.add(cameraTop);
+scene.add(camera);
+
+
+
+-->
