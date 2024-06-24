@@ -82,6 +82,7 @@ class GameScene {
     this._cameraTop = new OrthographicCamera(-mapHalfSize, mapHalfSize, mapHalfSize, -mapHalfSize);
     this._cameraTop.position.set(mapHalfSize, this._mapSize, -mapHalfSize);
     this._cameraTop.lookAt(mapHalfSize, 0, -mapHalfSize);
+    this._cameraTop.updateProjectionMatrix();
 
     this._controls = new OrbitControls(this._camera, this._renderer.domElement);
     this._controls.target.set(7.5, 0, -7.5)
