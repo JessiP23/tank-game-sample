@@ -77,8 +77,9 @@ class GameScene {
     this._camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
     this._camera.position.set(30,0,10);
 
-    this._cameraTop = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
-    this._cameraTop.position.set(7,7,20);
+    this._cameraTop = new PerspectiveCamera(40, aspectRatio, 0.1, 1000);
+    this._cameraTop.position.set(7,15,-7);
+    this._cameraTop.lookAt(7.5,0,-7.5);
 
     this._controls = new OrbitControls(this._camera, this._renderer.domElement);
     this._controls.target.set(7.5, 0, -7.5)
