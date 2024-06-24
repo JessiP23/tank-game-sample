@@ -8,7 +8,7 @@ class Wall extends GameEntity{
     }
 
     public load = async () => {
-        const geometry = new BoxGeometry(1,1,1);
+        const geometry = new BoxGeometry(1,1,5);
         const material = new MeshStandardMaterial({
             map: ResourceManager.instance.getTexture("wall"),
         });

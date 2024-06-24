@@ -11,6 +11,7 @@ import GameMap from "../map/GameMap";
 import ResourceManager from "../utils/ResourceManager";
 import PlayerTank from "../entities/PlayerTank";
 import Wall from "../map/Wall";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 class GameScene {
   private static _instance = new GameScene();
@@ -24,6 +25,7 @@ class GameScene {
   private _cameraTop: PerspectiveCamera;
   private _miniMapCanvas: HTMLCanvasElement;
   private _miniMapRenderer: WebGLRenderer;
+  private _controls: OrbitControls;
 
   // three js scene
   private readonly _scene = new Scene();
@@ -73,10 +75,13 @@ class GameScene {
 
     const aspectRatio = this._width / this._height;
     this._camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
-    this._camera.position.set(7, 7, 5);
+    this._camera.position.set(30,0,10);
 
     this._cameraTop = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
     this._cameraTop.position.set(7,7,20);
+
+    this._controls = new OrbitControls(this._camera, this._renderer.domElement);
+    this._controls.target.set(7.5, 0, -7.5)
 
     // listen to size change
     window.addEventListener("resize", this.resize, false);
@@ -131,6 +136,7 @@ class GameScene {
     }
     // add a light to the scene
     const light = new HemisphereLight(0xffffbb, 0x080820, 1);
+    this._scene.rotateX(-Math.PI /2)
     this._scene.add(light);
   };
 
@@ -145,8 +151,10 @@ class GameScene {
       const element = this._gameEntities[index];
       element.update(deltaT); /// ???
     }
+    this._controls.update();
     this._renderer.render(this._scene, this._camera);
     this._miniMapRenderer.render(this._scene, this._cameraTop);
+
   };
 
   //method to dynamically add entities to the scene
