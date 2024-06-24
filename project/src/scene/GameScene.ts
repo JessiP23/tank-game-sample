@@ -73,7 +73,7 @@ class GameScene {
 
     const aspectRatio = this._width / this._height;
     this._camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
-    this._camera.position.set(7, 7, 15);
+    this._camera.position.set(7, 7, 5);
 
     this._cameraTop = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
     this._cameraTop.position.set(7,7,20);
