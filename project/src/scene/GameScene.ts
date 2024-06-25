@@ -212,19 +212,25 @@ class GameScene {
     const moveSpeed = 3;
     const rotationSpeed = Math.PI /2;
 
-
+    const forwardDirection = new Vector3(
+      -Math.sin(this._camera.rotation.y), 0, -Math.cos(this._camera.rotation.y)
+    );
 
     if (this._keyboardState.UpPressed) {
-      this._camera.position.z -= moveSpeed * delta;
+      this._camera.position.addScaledVector(forwardDirection, -moveSpeed*delta);
     }
     if (this._keyboardState.DownPressed) {
-      this._camera.position.z += moveSpeed * delta;
+      this._camera.position.addScaledVector(forwardDirection, moveSpeed * delta);
     }
+
+    forwardDirection.x = -Math.sin(this._camera.rotation.y);
+    forwardDirection.z = -Math.cos(this._camera.rotation.y);
+
     if (this._keyboardState.LeftPressed) {
-      this._camera.rotation.y += rotationSpeed * delta;
+      this._camera.rotateOnAxis(new Vector3(0,1,0), rotationSpeed* delta);
     }
     if (this._keyboardState.RightPressed) {
-      this._camera.rotation.y -= rotationSpeed* delta;
+      this._camera.rotateOnAxis(new Vector3(0,1,0), -rotationSpeed * delta);
     }
   }
 
