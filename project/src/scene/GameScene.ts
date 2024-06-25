@@ -10,10 +10,15 @@ import {
 import GameEntity from "../entities/GameEntity";
 import GameMap from "../map/GameMap";
 import ResourceManager from "../utils/ResourceManager";
-import PlayerTank from "../entities/PlayerTank";
 import Wall from "../map/Wall";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 
+type KeyboardState = {
+  LeftPressed: boolean;
+  RightPressed: boolean;
+  UpPressed: boolean;
+  DownPressed: boolean;
+};
 
 class GameScene {
   private static _instance = new GameScene();
@@ -50,7 +55,13 @@ class GameScene {
     return this._gameEntities;
   }
 
-  private _playerTank: PlayerTank | null = null;
+
+  private _keyboardState: KeyboardState = {
+    LeftPressed: false,
+    RightPressed: false,
+    UpPressed: false,
+    DownPressed: false,
+  };
 
   private constructor() {
     this._width = window.innerWidth;
@@ -80,7 +91,7 @@ class GameScene {
 
     const aspectRatio = this._width / this._height;
     this._camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
-    this._camera.position.set(0,0,10);
+    this._camera.position.set(10,5,-10);
 
     const mapHalfSize = this._mapSize / 2;
     this._cameraTop = new OrthographicCamera(-mapHalfSize, mapHalfSize, mapHalfSize, -mapHalfSize);
@@ -94,16 +105,49 @@ class GameScene {
     // listen to size change
     window.addEventListener("resize", this.resize, false);
 
+    window.addEventListener('keydown', this.handleKeyDown, false);
+    window.addEventListener("keyup", this.handleKeyUp, false);
+
     // add the game map
     const gameMap = new GameMap(new Vector3(0, 0, 0), this._mapSize);
     this._gameEntities.push(gameMap);
 
-    // add the player tank
-    const playerTank = new PlayerTank(new Vector3(7, 7, 0));
-    this._gameEntities.push(playerTank);
-    this._playerTank = playerTank;
-
+  
     this.createWalls();
+  }
+
+  private handleKeyDown = (event: KeyboardEvent) => {
+    switch(event.key) {
+      case 'ArrowUp':
+        this._keyboardState.UpPressed = true;
+        break;
+      case 'ArrowDown':
+        this._keyboardState.DownPressed = true;
+        break;
+      case 'ArrowLeft':
+        this._keyboardState.LeftPressed = true;
+        break;
+      case 'ArrowRight':
+        this._keyboardState.RightPressed = true;
+        break;
+    }
+  };
+
+  private handleKeyUp = (event: KeyboardEvent) => {
+    switch(event.key) {
+      case 'ArrowUp':
+        this._keyboardState.UpPressed = false;
+        break;
+      case 'ArrowDown':
+        this._keyboardState.DownPressed = false;
+        break;
+      case 'ArrowLeft':
+        this._keyboardState.LeftPressed = false;
+        break;
+      case 'ArrowRight':
+        this._keyboardState.RightPressed = false;
+        break;
+    }
   }
 
   private createWalls = () => {
@@ -162,14 +206,30 @@ class GameScene {
     }
     this._controls.update();
 
-    if (this._playerTank) {
-      this.updateCameraToFollowTank(this._playerTank);
-    }
+    this.updateCamera(deltaT);
 
     this._renderer.render(this._scene, this._camera);
     this._miniMapRenderer.render(this._scene, this._cameraTop);
 
   };
+
+  private updateCamera = (delta: number) => {
+    const moveSpeed = 3;
+    const rotationSpeed = Math.PI /2;
+
+    if (this._keyboardState.UpPressed) {
+      this._camera.position.z -= moveSpeed * delta;
+    }
+    if (this._keyboardState.DownPressed) {
+      this._camera.position.z += moveSpeed * delta;
+    }
+    if (this._keyboardState.LeftPressed) {
+      this._camera.rotation.x += rotationSpeed * delta;
+    }
+    if (this._keyboardState.RightPressed) {
+      this._camera.rotation.x -= rotationSpeed* delta;
+    }
+  }
 
   //method to dynamically add entities to the scene
   public addToScene = (entity: GameEntity) => {
@@ -189,17 +249,6 @@ class GameScene {
     ];
   }
 
-
-  private updateCameraToFollowTank(tank: PlayerTank) {
-   // Set the camera's position to follow the tank's XZ movement
-  this._camera.position.x = tank.position.x;
-  this._camera.position.z = tank.position.z;
-  this._camera.position.y = tank.position.y; // keep y position fixed, 3 units above the tank
-
-
-  // Ensure the camera looks at the tank
-  this._camera.lookAt(tank.position);
-  }
 
 }
 
