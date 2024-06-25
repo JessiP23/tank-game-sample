@@ -211,16 +211,14 @@ class GameScene {
 
   private updateCamera = (delta: number) => {
     const moveSpeed = 3;
-
-    const forwardDirection = new Vector3(
-      -Math.sin(this._camera.rotation.y), 0, -Math.cos(this._camera.rotation.y)
-    );
+    const forwardDirection = new Vector3();
+    this._camera.getWorldDirection(forwardDirection);
 
     if (this._keyboardState.UpPressed) {
-      this.moveCamera(forwardDirection, moveSpeed *delta);
+      this._camera.position.z -= moveSpeed * delta;
     }
     if (this._keyboardState.DownPressed) {
-      this.moveCamera(forwardDirection, -moveSpeed * delta);
+      this._camera.position.z += moveSpeed * delta;
     }
     if (this._keyboardState.LeftPressed) {
       this.rotateCamera(Math.PI / 2 * delta);
@@ -248,9 +246,9 @@ class GameScene {
   };
 
   private clampCameraPosition = () => {
-    const halfMapSize = this._mapSize / 2;
-    this._camera.position.x = THREE.MathUtils.clamp(this._camera.position.x, -halfMapSize + 1, halfMapSize - 1);
-    this._camera.position.z = THREE.MathUtils.clamp(this._camera.position.z, -halfMapSize + 1, halfMapSize - 1);
+    const halfMapSize = this._mapSize;
+    this._camera.position.x = THREE.MathUtils.clamp(this._camera.position.x, -halfMapSize , halfMapSize);
+    this._camera.position.z = THREE.MathUtils.clamp(this._camera.position.z, -halfMapSize , halfMapSize );
 
   }
 
