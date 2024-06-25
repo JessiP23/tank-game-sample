@@ -11,6 +11,7 @@ import GameEntity from "../entities/GameEntity";
 import GameMap from "../map/GameMap";
 import ResourceManager from "../utils/ResourceManager";
 import Wall from "../map/Wall";
+import * as THREE from 'three';
 
 type KeyboardState = {
   LeftPressed: boolean;
@@ -210,28 +211,54 @@ class GameScene {
 
   private updateCamera = (delta: number) => {
     const moveSpeed = 3;
-    const rotationSpeed = Math.PI /2;
 
     const forwardDirection = new Vector3(
       -Math.sin(this._camera.rotation.y), 0, -Math.cos(this._camera.rotation.y)
     );
 
     if (this._keyboardState.UpPressed) {
-      this._camera.position.addScaledVector(forwardDirection, -moveSpeed*delta);
+      this.moveCamera(forwardDirection, moveSpeed *delta);
     }
     if (this._keyboardState.DownPressed) {
-      this._camera.position.addScaledVector(forwardDirection, moveSpeed * delta);
+      this.moveCamera(forwardDirection, -moveSpeed * delta);
     }
-
-    forwardDirection.x = -Math.sin(this._camera.rotation.y);
-    forwardDirection.z = -Math.cos(this._camera.rotation.y);
-
     if (this._keyboardState.LeftPressed) {
-      this._camera.rotateOnAxis(new Vector3(0,1,0), rotationSpeed* delta);
+      this.rotateCamera(Math.PI / 2 * delta);
     }
     if (this._keyboardState.RightPressed) {
-      this._camera.rotateOnAxis(new Vector3(0,1,0), -rotationSpeed * delta);
+      this.rotateCamera(-Math.PI /2 * delta);
     }
+
+    this._camera.position.y = 2;
+
+    this.clampCameraPosition();
+
+  }
+
+  private moveCamera = (direction: Vector3, distance: number) => {
+    const newPosition = this._camera.position.clone().addScaledVector(direction, distance);
+
+    if (this.isPositionWithinMapBounds(newPosition)){
+      this._camera.position.copy(newPosition);
+    }
+  };
+
+  private rotateCamera = (angle: number) => {
+    this._camera.rotateOnWorldAxis(new Vector3(0,1,0), angle);
+  };
+
+  private clampCameraPosition = () => {
+    const halfMapSize = this._mapSize / 2;
+    this._camera.position.x = THREE.MathUtils.clamp(this._camera.position.x, -halfMapSize + 1, halfMapSize - 1);
+    this._camera.position.z = THREE.MathUtils.clamp(this._camera.position.z, -halfMapSize + 1, halfMapSize - 1);
+
+  }
+
+  private isPositionWithinMapBounds = (position: Vector3): boolean => {
+    const halfMapSize = this._mapSize / 2;
+    return (
+      position.x >= -halfMapSize + 1 && position.x <= halfMapSize - 1 && position.z >= -halfMapSize + 1 && position.z <= halfMapSize - 1
+    );
   }
 
   //method to dynamically add entities to the scene
