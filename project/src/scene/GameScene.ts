@@ -211,14 +211,25 @@ class GameScene {
 
   private updateCamera = (delta: number) => {
     const moveSpeed = 3;
-    const forwardDirection = new Vector3();
-    this._camera.getWorldDirection(forwardDirection);
+
+    const forward = new Vector3();
+    this._camera.getWorldDirection(forward);
+    forward.y = 0;
+    forward.normalize();
+
+    console.log('Camera Forward Direction', forward);
+    
+    let moved = false;
 
     if (this._keyboardState.UpPressed) {
-      this._camera.position.z -= moveSpeed * delta;
+      console.log('Moving forwards');
+      this.moveCamera(forward, moveSpeed * delta);
+      moved = true;
     }
     if (this._keyboardState.DownPressed) {
-      this._camera.position.z += moveSpeed * delta;
+      console.log("Moving backwards");
+      this.moveCamera(forward, -moveSpeed * delta);
+      moved = true;
     }
     if (this._keyboardState.LeftPressed) {
       this.rotateCamera(Math.PI / 2 * delta);
@@ -227,17 +238,23 @@ class GameScene {
       this.rotateCamera(-Math.PI /2 * delta);
     }
 
-    this._camera.position.y = 2;
+    if (moved) {
+      this._camera.position.y = 2;
 
-    this.clampCameraPosition();
+      this.clampCameraPosition();
+    }
 
   }
 
   private moveCamera = (direction: Vector3, distance: number) => {
     const newPosition = this._camera.position.clone().addScaledVector(direction, distance);
+    console.log("New camera position:", newPosition);
+    
 
     if (this.isPositionWithinMapBounds(newPosition)){
       this._camera.position.copy(newPosition);
+    } else {
+      console.log("New position out of bonds", newPosition);
     }
   };
 
@@ -246,14 +263,14 @@ class GameScene {
   };
 
   private clampCameraPosition = () => {
-    const halfMapSize = this._mapSize;
+    const halfMapSize = this._mapSize * 2;
     this._camera.position.x = THREE.MathUtils.clamp(this._camera.position.x, -halfMapSize , halfMapSize);
-    this._camera.position.z = THREE.MathUtils.clamp(this._camera.position.z, -halfMapSize , halfMapSize );
+    this._camera.position.z = THREE.MathUtils.clamp(this._camera.position.z, -halfMapSize , halfMapSize);
 
   }
 
   private isPositionWithinMapBounds = (position: Vector3): boolean => {
-    const halfMapSize = this._mapSize / 2;
+    const halfMapSize = this._mapSize * 2;
     return (
       position.x >= -halfMapSize + 1 && position.x <= halfMapSize - 1 && position.z >= -halfMapSize + 1 && position.z <= halfMapSize - 1
     );
