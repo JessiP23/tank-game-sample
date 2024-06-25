@@ -11,7 +11,6 @@ import GameEntity from "../entities/GameEntity";
 import GameMap from "../map/GameMap";
 import ResourceManager from "../utils/ResourceManager";
 import Wall from "../map/Wall";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 type KeyboardState = {
   LeftPressed: boolean;
@@ -32,7 +31,6 @@ class GameScene {
   private _cameraTop: OrthographicCamera;
   private _miniMapCanvas: HTMLCanvasElement;
   private _miniMapRenderer: WebGLRenderer;
-  private _controls: OrbitControls;
 
   // three js scene
   private readonly _scene = new Scene();
@@ -91,16 +89,14 @@ class GameScene {
 
     const aspectRatio = this._width / this._height;
     this._camera = new PerspectiveCamera(45, aspectRatio, 0.1, 1000);
-    this._camera.position.set(10,5,-10);
+    this._camera.position.set(10,2,-10);
+    this._camera.lookAt(new Vector3(0,0,0))
 
     const mapHalfSize = this._mapSize / 2;
     this._cameraTop = new OrthographicCamera(-mapHalfSize, mapHalfSize, mapHalfSize, -mapHalfSize);
     this._cameraTop.position.set(mapHalfSize, this._mapSize, -mapHalfSize);
     this._cameraTop.lookAt(mapHalfSize, 0, -mapHalfSize);
     this._cameraTop.updateProjectionMatrix();
-
-    this._controls = new OrbitControls(this._camera, this._renderer.domElement);
-    this._controls.target.set(7.5, 0, -7.5)
 
     // listen to size change
     window.addEventListener("resize", this.resize, false);
@@ -204,7 +200,6 @@ class GameScene {
       const element = this._gameEntities[index];
       element.update(deltaT); /// ???
     }
-    this._controls.update();
 
     this.updateCamera(deltaT);
 
@@ -217,6 +212,8 @@ class GameScene {
     const moveSpeed = 3;
     const rotationSpeed = Math.PI /2;
 
+
+
     if (this._keyboardState.UpPressed) {
       this._camera.position.z -= moveSpeed * delta;
     }
@@ -224,10 +221,10 @@ class GameScene {
       this._camera.position.z += moveSpeed * delta;
     }
     if (this._keyboardState.LeftPressed) {
-      this._camera.rotation.x += rotationSpeed * delta;
+      this._camera.rotation.y += rotationSpeed * delta;
     }
     if (this._keyboardState.RightPressed) {
-      this._camera.rotation.x -= rotationSpeed* delta;
+      this._camera.rotation.y -= rotationSpeed* delta;
     }
   }
 
