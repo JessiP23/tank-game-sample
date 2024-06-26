@@ -12,7 +12,14 @@ abstract class GameEntity {
 
   protected _collider?: Box3 | Sphere;
   public get collider() {
+    if (!this._collider) {
+      throw new Error("Collider is not set");
+    }
     return this._collider;
+  }
+
+  public set collider(value: Box3 | Sphere) {
+    this._collider = value;
   }
 
   protected _entityType: EntityType;

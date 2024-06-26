@@ -216,18 +216,14 @@ class GameScene {
     this._camera.getWorldDirection(forward);
     forward.y = 0;
     forward.normalize();
-
-    console.log('Camera Forward Direction', forward);
     
     let moved = false;
 
     if (this._keyboardState.UpPressed) {
-      console.log('Moving forwards');
       this.moveCamera(forward, moveSpeed * delta);
       moved = true;
     }
     if (this._keyboardState.DownPressed) {
-      console.log("Moving backwards");
       this.moveCamera(forward, -moveSpeed * delta);
       moved = true;
     }
@@ -248,7 +244,6 @@ class GameScene {
 
   private moveCamera = (direction: Vector3, distance: number) => {
     const newPosition = this._camera.position.clone().addScaledVector(direction, distance);
-    console.log("New camera position:", newPosition);
     
 
     if (this.isPositionWithinMapBounds(newPosition)){
