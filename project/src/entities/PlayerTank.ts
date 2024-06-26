@@ -165,7 +165,7 @@ class PlayerTank extends GameEntity {
     testingSphere.center.add(computedMovement);
 
     //search for possible collision
-    const colliders = GameScene.instance.gameEntities.filter((e) => e !== this && e.entityType !== 'bullet' && e.collider && e.collider!.intersectsSphere(testingSphere));
+    const colliders = GameScene.instance.gameEntities.filter((e) => e !== this && e.collider && e.collider!.intersectsSphere(testingSphere));
 
     //something is blocking the tank
     if (colliders.length) {
