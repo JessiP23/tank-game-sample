@@ -12,6 +12,7 @@ import GameMap from "../map/GameMap";
 import ResourceManager from "../utils/ResourceManager";
 import Wall from "../map/Wall";
 import * as THREE from 'three';
+import AIEntity from "../entities/AIEntity";
 
 type KeyboardState = {
   LeftPressed: boolean;
@@ -32,6 +33,7 @@ class GameScene {
   private _cameraTop: OrthographicCamera;
   private _miniMapCanvas: HTMLCanvasElement;
   private _miniMapRenderer: WebGLRenderer;
+  private _aiEntities: AIEntity[] = [];
 
   // three js scene
   private readonly _scene = new Scene();
@@ -150,6 +152,10 @@ class GameScene {
   private createWalls = () => {
     //helper variable for wall placement
     const edge = this._mapSize - 1;
+    const aiEntity = new AIEntity(new Vector3(5,0,5));
+    this._aiEntities.push(aiEntity);
+    this._gameEntities.push(aiEntity);
+    this._scene.add(aiEntity.mesh);
 
     //add a edge walls
     this._gameEntities.push(new Wall(new Vector3(0,0,0)));
@@ -203,11 +209,26 @@ class GameScene {
     }
 
     this.updateCamera(deltaT);
+    this.updateAIEntities(this._clock.getDelta());
+
 
     this._renderer.render(this._scene, this._camera);
-    this._miniMapRenderer.render(this._scene, this._cameraTop);
+    this._miniMapRenderer.render(this._scene, this._cameraTop);  
 
   };
+
+  private updateAIEntities = (delta: number) => {
+    for (let aiEntity of this._aiEntities) {
+      const direction = new Vector3(1,0,0);
+      const raycaster = new THREE.Raycaster(aiEntity.mesh.position, direction);
+      const intersects = raycaster.intersectObjects(this._gameEntities.map(entity => entity.mesh));
+      if (intersects.length > 0 && intersects[0].distance < 1) {
+        aiEntity.mesh.position.addScaledVector(direction.negate(), 2 * delta);
+      } else {
+        aiEntity.update(delta);
+      }
+    }
+  }
 
   private updateCamera = (delta: number) => {
     const moveSpeed = 3;

@@ -44,11 +44,11 @@ abstract class GameEntity {
   }
 
   // methods
-  public load = async () => {};
-  public update = (_deltaT: number) => {};
+  public async load(){};
+  public update(_deltaT: number){};
 
   //method to be called before disposing the entity (to free resources)
-  public dispose = () => {};
+  public dispose() {};
 }
 
 export default GameEntity;
