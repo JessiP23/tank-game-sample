@@ -141,15 +141,11 @@ class GameScene {
       );
 
       if (intersectedEntity instanceof Wall) {
-        const side = this.getWallSide(intersectedEntity);
         if (this._selectedWall.length > 0) {
           this._selectedWall.forEach(wall => wall.resetColor);
         }
-
-        if (side) {
-          this._selectedWall = this._wallsBySide[side];
-          this._selectedWall.forEach(wall => wall.setColor(0xff0000));
-        }
+          this._selectedWall = [intersectedEntity];
+          intersectedEntity.setColor(0xff0000)
         
       }
     }
@@ -221,13 +217,13 @@ class GameScene {
 
     for (let x = 0; x <= edge; x++) {
       this.addWall(new Vector3(x, 0, 0), 'front');
-      this.addWall(new Vector3(x, 0, edge), 'back');
+      this.addWall(new Vector3(x, edge, 0), 'back');
     }
   
     // Left and right walls (along x-axis)
-    for (let z = 0; z <= edge; z++) {
-      this.addWall(new Vector3(0, 0, z), 'left');
-      this.addWall(new Vector3(edge, 0, z), 'right');
+    for (let y = 0; y <= edge; y++) {
+      this.addWall(new Vector3(0, y, 0), 'left');
+      this.addWall(new Vector3(edge, y, 0), 'right');
     }
   }
 
