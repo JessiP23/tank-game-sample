@@ -34,7 +34,8 @@ class GameScene {
   private _miniMapCanvas: HTMLCanvasElement;
   private _miniMapRenderer: WebGLRenderer;
   private _aiEntities: AIEntity[] = [];
-  private _selectedWall: Wall | null = null;
+  private _selectedWall: Wall[] = [];
+  private _wallsBySide: {[key: string]: Wall[]} = {};
 
   // three js scene
   private readonly _scene = new Scene();
@@ -102,13 +103,14 @@ class GameScene {
     this._cameraTop.lookAt(mapHalfSize, 0, -mapHalfSize);
     this._cameraTop.updateProjectionMatrix();
 
+    
+
     // listen to size change
     window.addEventListener("resize", this.resize, false);
 
     window.addEventListener('keydown', this.handleKeyDown, false);
     window.addEventListener("keyup", this.handleKeyUp, false);
     window.addEventListener("click", this.handleMouseClick, false);
-    window.addEventListener('mouseup', this.handleMouseUp, false);
 
     // add the game map
     const gameMap = new GameMap(new Vector3(0, 0, 0), this._mapSize);
@@ -139,21 +141,33 @@ class GameScene {
       );
 
       if (intersectedEntity instanceof Wall) {
-        if (this._selectedWall) {
-          this._selectedWall.resetColor();
+        const side = this.getWallSide(intersectedEntity);
+        if (this._selectedWall.length > 0) {
+          this._selectedWall.forEach(wall => wall.resetColor);
         }
-        this._selectedWall = intersectedEntity;
-        this._selectedWall.setColor(0xff0000);
+
+        if (side) {
+          this._selectedWall = this._wallsBySide[side];
+          this._selectedWall.forEach(wall => wall.setColor(0xff0000));
+        }
+        
       }
     }
   };
 
-  private handleMouseUp = () => {
-    if (this._selectedWall) {
-      this._selectedWall.resetColor();
-      this._selectedWall = null;
+  private getWallSide(wall:Wall): string | null {
+    const position = wall.mesh.position;
+    if (position.z === 0) {
+      return 'front';
+    } else if (position.z === this._mapSize - 1) {
+      return 'back';
+    } else if (position.x === 0) {
+      return 'left';
+    } else if (position.x === this._mapSize - 1) {
+      return 'right';
     }
-  };
+    return null;
+  }
 
   private handleKeyDown = (event: KeyboardEvent) => {
     switch(event.key) {
@@ -191,25 +205,37 @@ class GameScene {
 
   private createWalls = () => {
     //helper variable for wall placement
+    
     const edge = this._mapSize - 1;
+
+    this._wallsBySide['front'] = [];
+    this._wallsBySide['back'] = [];
+    this._wallsBySide['left'] = [];
+    this._wallsBySide['right'] = [];
+
+
     const aiEntity = new AIEntity(new Vector3(5,0,5));
     this._aiEntities.push(aiEntity);
     this._gameEntities.push(aiEntity);
     this._scene.add(aiEntity.mesh);
 
-    //add a edge walls
-    this._gameEntities.push(new Wall(new Vector3(0,0,0)));
-    this._gameEntities.push(new Wall(new Vector3(edge,0,0)));
-    this._gameEntities.push(new Wall(new Vector3(edge,edge,0)));
-    this._gameEntities.push(new Wall(new Vector3(0, edge,0)));
-
-    //fill in the gaps between the edge walls
-    for (let i = 1; i < edge; i++) {
-      this._gameEntities.push(new Wall(new Vector3(i,0,0)));
-      this._gameEntities.push(new Wall(new Vector3(0,i,0)));
-      this._gameEntities.push(new Wall(new Vector3(edge,i,0)));
-      this._gameEntities.push(new Wall(new Vector3(i, edge,0)));
+    for (let x = 0; x <= edge; x++) {
+      this.addWall(new Vector3(x, 0, 0), 'front');
+      this.addWall(new Vector3(x, 0, edge), 'back');
     }
+  
+    // Left and right walls (along x-axis)
+    for (let z = 0; z <= edge; z++) {
+      this.addWall(new Vector3(0, 0, z), 'left');
+      this.addWall(new Vector3(edge, 0, z), 'right');
+    }
+  }
+
+  private addWall(position: Vector3, side: string) {
+    const wall = new Wall(position);
+    this._gameEntities.push(wall);
+    this._wallsBySide[side].push(wall);
+    this._scene.add(wall.mesh);
   }
 
   private resize = () => {
