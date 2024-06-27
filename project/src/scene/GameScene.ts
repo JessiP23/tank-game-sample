@@ -34,6 +34,7 @@ class GameScene {
   private _miniMapCanvas: HTMLCanvasElement;
   private _miniMapRenderer: WebGLRenderer;
   private _aiEntities: AIEntity[] = [];
+  private _selectedWall: Wall | null = null;
 
   // three js scene
   private readonly _scene = new Scene();
@@ -106,6 +107,8 @@ class GameScene {
 
     window.addEventListener('keydown', this.handleKeyDown, false);
     window.addEventListener("keyup", this.handleKeyUp, false);
+    window.addEventListener("click", this.handleMouseClick, false);
+    window.addEventListener('mouseup', this.handleMouseUp, false);
 
     // add the game map
     const gameMap = new GameMap(new Vector3(0, 0, 0), this._mapSize);
@@ -114,6 +117,43 @@ class GameScene {
   
     this.createWalls();
   }
+
+
+  private handleMouseClick = (event: MouseEvent) => {
+    const mouse = new THREE.Vector2(
+      (event.clientX / window.innerWidth) * 2 - 1,
+      -(event.clientY / window.innerHeight) * 2 + 1
+    );
+
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, this._camera);
+
+    const intersects = raycaster.intersectObjects(
+      this._gameEntities.map((entity) => entity.mesh)
+    );
+
+    if (intersects.length > 0) {
+      const intersectedMesh = intersects[0].object;
+      const intersectedEntity = this._gameEntities.find(
+        (entity) => entity.mesh === intersectedMesh
+      );
+
+      if (intersectedEntity instanceof Wall) {
+        if (this._selectedWall) {
+          this._selectedWall.resetColor();
+        }
+        this._selectedWall = intersectedEntity;
+        this._selectedWall.setColor(0xff0000);
+      }
+    }
+  };
+
+  private handleMouseUp = () => {
+    if (this._selectedWall) {
+      this._selectedWall.resetColor();
+      this._selectedWall = null;
+    }
+  };
 
   private handleKeyDown = (event: KeyboardEvent) => {
     switch(event.key) {
@@ -209,7 +249,7 @@ class GameScene {
     }
 
     this.updateCamera(deltaT);
-    this.updateAIEntities(this._clock.getDelta());
+    this.updateAIEntities(deltaT);
 
 
     this._renderer.render(this._scene, this._camera);
