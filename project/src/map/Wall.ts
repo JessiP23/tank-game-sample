@@ -6,7 +6,7 @@ class Wall extends GameEntity{
     private _material: MeshStandardMaterial;
     constructor(position:Vector3){
         super(position, 'general');
-        const geometry = new BoxGeometry(1,1,1);
+        const geometry = new BoxGeometry(1,1,5);
         this._material = new MeshStandardMaterial({
             map: ResourceManager.instance.getTexture('wall'),
         });
