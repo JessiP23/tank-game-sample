@@ -48,17 +48,6 @@ class GameScene {
   //map size
   private _mapSize = 15;
 
-  //expose the camera
-  public get camera() {
-    return this._camera;
-  }
-
-  //expose current entities
-  public get gameEntities() {
-    return this._gameEntities;
-  }
-
-
   private _keyboardState: KeyboardState = {
     LeftPressed: false,
     RightPressed: false,
