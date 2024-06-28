@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Vite + TS</title>
     <style>
       #app{
@@ -21,12 +22,40 @@
       }
     </style>
   </head>
-  <body>
+  <body class="bg-gray-100">
     <div id="app">
+      <div id="panel-container" class="fixed top-10 right-10 bg-white bg-opacity-80 border border-gray-300 p-4 shadow-lg rounded-lg z-10">
+        <button id="toggle-button" onclick="togglePanel()" class="flex items-center space-x-2 focus:outline-none">
+          <img id="arrow-icon" src="./public/arrow.down.svg" alt="Arrow Icon" class="w-4 h-auto transform transition-transform duration-300" />
+          <span class="text-lg font-semibold"></span>
+        </button>
+        <div id="panel-content" class="hidden mt-4">
+          <div id="properties" class="space-y-2">
+            <label class="flex items-center"><input type="checkbox" id="doorsCheckBox" class="mr-2"><span>Doors</span></label>
+            <label class="flex items-center"><input type="checkbox" id="wallsCheckBox" class="mr-2"><span>Walls</span></label>
+          </div>
+        </div>
+      </div>
     </div>
     <canvas id="mini-map"></canvas>
    
     <script type="module" src="/src/main.ts"></script>
+    <script>
+      function togglePanel() {
+        var pannelContent = document.getElementById("panel-content");
+        var arrowIcon = document.getElementById("arrow-icon");
+
+        if (pannelContent.classList.contains("hidden")) {
+          pannelContent.classList.remove("hidden");
+          pannelContent.classList.add("block")
+          arrowIcon.classList.add("rotate-180");
+        } else {
+          pannelContent.classList.remove("block");
+          pannelContent.classList.add("hidden")
+          arrowIcon.classList.remove("rotate-180")
+        }
+      }
+    </script>
   </body>
 </html>
 
