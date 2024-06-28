@@ -209,11 +209,8 @@ class GameScene {
     this._wallsBySide['left'] = [];
     this._wallsBySide['right'] = [];
 
+    const wallSections: {[key:string]:Wall[]} = {};
 
-    const aiEntity = new AIEntity(new Vector3(5,0,5));
-    this._aiEntities.push(aiEntity);
-    this._gameEntities.push(aiEntity);
-    this._scene.add(aiEntity.mesh);
 
     for (let x = 0; x <= edge; x++) {
       this.addWall(new Vector3(x, 0, 0), 'front');
@@ -225,6 +222,10 @@ class GameScene {
       this.addWall(new Vector3(0, y, 0), 'left');
       this.addWall(new Vector3(edge, y, 0), 'right');
     }
+
+    Object.keys(wallSections).forEach(key => {
+      this._wallsBySide[key] = wallSections[key];
+    });
   }
 
   private addWall(position: Vector3, side: string) {
