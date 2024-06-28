@@ -151,19 +151,6 @@ class GameScene {
     }
   };
 
-  private getWallSide(wall:Wall): string | null {
-    const position = wall.mesh.position;
-    if (position.z === 0) {
-      return 'front';
-    } else if (position.z === this._mapSize - 1) {
-      return 'back';
-    } else if (position.x === 0) {
-      return 'left';
-    } else if (position.x === this._mapSize - 1) {
-      return 'right';
-    }
-    return null;
-  }
 
   private handleKeyDown = (event: KeyboardEvent) => {
     switch(event.key) {
