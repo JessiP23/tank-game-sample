@@ -1,13 +1,15 @@
 import 'three';
 import { BoxGeometry, Mesh, MeshPhysicalMaterial, Quaternion, Vector3 } from 'three';
-class Door {
-    private _mesh:Mesh;
+import GameEntity from '../entities/GameEntity';
+
+class Door extends GameEntity {
     private _isOpen: boolean;
     private _initialRotation: Quaternion;
     private _targetRotation: Quaternion;
 
     constructor(position:Vector3) {
-        const geometry = new BoxGeometry(0.2, 0.5, 0.05);
+        super(position, 'general');
+        const geometry = new BoxGeometry(1, 1, 5);
         const material = new MeshPhysicalMaterial({
             color: 0x8b4513,
             metalness: 0.8,
@@ -41,9 +43,11 @@ class Door {
         }
     }
 
+    public async load(): Promise<void> {}
+
     public update(): void{
-        const delta = 0.1;
-        this._mesh.quaternion.slerp(this._targetRotation, delta);
+        const slerpDelta = 0.1;
+        this._mesh.quaternion.slerp(this._targetRotation, slerpDelta);
     }
 }
 
