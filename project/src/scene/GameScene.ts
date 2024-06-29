@@ -214,6 +214,7 @@ class GameScene {
   }
 
   private addDoor() {
+    //adding door to scene
     const doorPosition = new Vector3(1, 1, 1);
     const door = new Door(doorPosition);
     this._gameEntities.push(door);
