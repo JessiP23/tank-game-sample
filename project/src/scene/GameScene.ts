@@ -142,6 +142,7 @@ class GameScene {
     }
   };
 
+  //event handling
 
   private handleKeyDown = (event: KeyboardEvent) => {
     switch(event.key) {
