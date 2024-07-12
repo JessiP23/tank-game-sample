@@ -55,6 +55,10 @@ class ResourceManager {
     //walls texture
     const wallTexture = await textureLoader.loadAsync('textures/texture.jpg');
     this._textures.set('wall', wallTexture);
+
+    //floor texture
+    const floorTexture = await textureLoader.loadAsync('textures/wall.png');
+    this._textures.set('roof', floorTexture);
   };
 
   // method for ground textures loading

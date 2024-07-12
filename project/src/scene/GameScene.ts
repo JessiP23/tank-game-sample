@@ -14,6 +14,7 @@ import Wall from "../map/Wall";
 import * as THREE from 'three';
 import AIEntity from "../entities/AIEntity";
 import Door from "../map/Door";
+import Roof from "../map/Roof";
 
 type KeyboardState = {
   LeftPressed: boolean;
@@ -109,6 +110,7 @@ class GameScene {
   
     this.createWalls();
     this.addDoor();
+    this.addRoof();
   }
 
 
@@ -220,6 +222,13 @@ class GameScene {
     const door = new Door(doorPosition);
     this._gameEntities.push(door);
     this._scene.add(door.mesh);
+  }
+
+  private addRoof() {
+    const roofPosition = new Vector3(0,0,7);
+    const roof = new Roof(roofPosition);
+    this._gameEntities.push(roof);
+    this._scene.add(roof.mesh);
   }
 
   private resize = () => {
