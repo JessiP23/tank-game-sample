@@ -15,7 +15,7 @@ class Roof extends GameEntity {
             });
 
             if (this._material.map) {
-                this._material.map.repeat.set(1, 1); // repeat the texture on both X and Y axes
+                this._material.map.repeat.set(10, 10); // repeat the texture on both X and Y axes
                 this._material.map.wrapS = RepeatWrapping; // wrap the texture on the X-axis
                 this._material.map.wrapT = RepeatWrapping; // wrap the texture on the Y-axis
             }
