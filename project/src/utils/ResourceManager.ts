@@ -22,6 +22,9 @@ class ResourceManager {
     return this._textures.get(textureName);
   }
 
+
+  // This area from below can create 3d models and load them, so when a user decides to add a new model this will be taken from here and then be added to the GameScene.ts file
+
   // load entry point
   public load = async () => {
     // create a unique texture loader
@@ -53,7 +56,7 @@ class ResourceManager {
     this._textures.set("tank-turret", tankTurretTexture);
 
     //walls texture
-    const wallTexture = await textureLoader.loadAsync('textures/texture.jpg');
+    const wallTexture = await textureLoader.loadAsync("textures/wall.png");
     this._textures.set('wall', wallTexture);
 
     //floor texture

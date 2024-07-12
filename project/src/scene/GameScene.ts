@@ -225,9 +225,10 @@ class GameScene {
   }
 
   private addRoof() {
-    const roofPosition = new Vector3(0,0,7);
+    const roofPosition = new Vector3(0,0,4);
     const roof = new Roof(roofPosition);
     this._gameEntities.push(roof);
+    roof.load();
     this._scene.add(roof.mesh);
   }
 
