@@ -1,11 +1,11 @@
-import { Vector3, Mesh, BoxGeometry, MeshStandardMaterial, Box3, DoubleSide, RepeatWrapping, TextureLoader } from "three";
+import { Vector3, Mesh, BoxGeometry, MeshStandardMaterial,  DoubleSide, RepeatWrapping, TextureLoader } from "three";
 import GameEntity from "../entities/GameEntity";
 
 class Roof extends GameEntity {
     private _material: MeshStandardMaterial = new MeshStandardMaterial;
-    constructor(position: Vector3) {
+    constructor(position: Vector3, width: number, height: number) {
         super(position, 'general');
-        const geometry = new BoxGeometry(30, 30, 1);
+        const geometry = new BoxGeometry(width, height, 0.1);
 
         const textureLoaded = new TextureLoader();
         textureLoaded.load("textures/wall.png", (texture) => {
@@ -32,9 +32,6 @@ class Roof extends GameEntity {
 
     public load = async () => {
         this._mesh.position.set(this._position.x, this._position.y, this._position.z);
-
-        // create a collider for this project
-        this._collider = new Box3().setFromObject(this._mesh);
     }
 }
 
