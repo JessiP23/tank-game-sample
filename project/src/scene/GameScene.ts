@@ -209,6 +209,8 @@ class GameScene {
     });
   }
 
+  // Add Wall
+
   private addWall(position: Vector3, side: string) {
     const wall = new Wall(position);
     this._gameEntities.push(wall);
